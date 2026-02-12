@@ -6,7 +6,63 @@ set -euo pipefail
 
 INSTALL_DIR="$HOME/.claude/hooks/peon-ping"
 SETTINGS="$HOME/.claude/settings.json"
-REPO_BASE="https://raw.githubusercontent.com/tonyyont/peon-ping/main"
+
+# --- Detect repository URL ---
+detect_repo_info() {
+  local remote_url=""
+  local owner=""
+  local repo=""
+  
+  if [ -n "${PEON_REPO_URL:-}" ]; then
+    echo "$PEON_REPO_URL"
+    return
+  fi
+  
+  if [ -n "$SCRIPT_DIR" ] && [ -d "$SCRIPT_DIR/.git" ]; then
+    remote_url=$(git -C "$SCRIPT_DIR" remote get-url origin 2>/dev/null || true)
+  fi
+  
+  if [ -z "$remote_url" ]; then
+    echo "https://raw.githubusercontent.com/kenyiu/peon-ping/main"
+    return
+  fi
+  
+  if echo "$remote_url" | grep -qE '^git@github\.com:'; then
+    owner=$(echo "$remote_url" | sed 's|git@github\.com:\([^/]*\)/.*|\1|')
+    repo=$(echo "$remote_url" | sed 's|git@github\.com:[^/]*/\([^.]*\).*|\1|')
+  elif echo "$remote_url" | grep -qE '^https://github\.com/'; then
+    owner=$(echo "$remote_url" | sed 's|https://github\.com/\([^/]*\)/.*|\1|')
+    repo=$(echo "$remote_url" | sed 's|https://github\.com/[^/]*/\([^.]*\).*|\1|')
+  fi
+  
+  if [ -n "$owner" ] && [ -n "$repo" ]; then
+    echo "https://raw.githubusercontent.com/$owner/$repo/main"
+  else
+    echo "https://raw.githubusercontent.com/kenyiu/peon-ping/main"
+  fi
+}
+
+detect_clone_url() {
+  local remote_url=""
+  
+  if [ -n "${PEON_CLONE_URL:-}" ]; then
+    echo "$PEON_CLONE_URL"
+    return
+  fi
+  
+  if [ -n "$SCRIPT_DIR" ] && [ -d "$SCRIPT_DIR/.git" ]; then
+    remote_url=$(git -C "$SCRIPT_DIR" remote get-url origin 2>/dev/null || true)
+  fi
+  
+  if [ -n "$remote_url" ]; then
+    echo "$remote_url" | sed -E \
+      -e 's|git@github\.com:|https://github.com/|' \
+      -e 's|\.git$||'
+    return
+  fi
+  
+  echo "https://github.com/kenyiu/peon-ping.git"
+}
 
 # --- Install mode flags ---
 INSTALL_MODE="global"  # default: global only
@@ -288,13 +344,16 @@ if [ -n "${BASH_SOURCE[0]:-}" ] && [ "${BASH_SOURCE[0]}" != "bash" ]; then
   fi
 fi
 
+REPO_BASE=$(detect_repo_info)
+CLONE_URL=$(detect_clone_url)
+
 # --- Auto-clone if not in git repo ---
 if [ -z "$SCRIPT_DIR" ] && ! is_git_repo; then
   if command -v git &>/dev/null; then
     # Auto-clone to /tmp
     TEMP_DIR=$(mktemp -d "/tmp/peon-ping-XXXXXX")
     echo "Cloning peon-ping to temporary directory..."
-    if git clone --depth 1 https://github.com/tonyyont/peon-ping.git "$TEMP_DIR" 2>/dev/null; then
+    if git clone --depth 1 "$CLONE_URL" "$TEMP_DIR" 2>/dev/null; then
       SCRIPT_DIR="$TEMP_DIR"
       echo "Cloned to $SCRIPT_DIR"
     else
@@ -313,7 +372,7 @@ if [ -z "$SCRIPT_DIR" ] && ! is_git_repo; then
     echo "  - Contribute or inspect changes"
     echo ""
     echo "For better security, install git and re-run:"
-    echo "  git clone https://github.com/tonyyont/peon-ping.git"
+    echo "  git clone $CLONE_URL"
     echo "  cd peon-ping"
     echo "  ./install.sh"
     echo ""
