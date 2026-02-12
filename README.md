@@ -15,19 +15,17 @@ Claude Code doesn't notify you when it finishes or needs permission. You tab awa
 ### Recommended: Clone the repository
 
 ```bash
-git clone https://github.com/tonyyont/peon-ping.git
+git clone https://github.com/kenyiu/peon-ping.git
 cd peon-ping
 ./install.sh
 ```
 
 This is the recommended method — you can review the code before running and easily pull updates.
 
-### Alternative: Direct install (forks supported)
-
-For forks, replace `tonyyont` with your fork's owner:
+### Alternative: Direct install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_FORK_NAME/peon-ping/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash
 ```
 
 > **Security Note:** Running `curl | bash` pipes remote code directly to your shell. Always review scripts before running. For forks, verify the repository is trustworthy. The git clone method lets you inspect the code first.
@@ -38,8 +36,8 @@ For releases, you can verify the download checksum:
 
 ```bash
 # Download the release and checksum file
-curl -fSL https://github.com/tonyyont/peon-ping/releases/download/vX.X.X/peon-ping-X.X.X.tar.gz -o peon-ping.tar.gz
-curl -fSL https://github.com/tonyyont/peon-ping/releases/download/vX.X.X/checksums.txt -o checksums.txt
+curl -fSL https://github.com/kenyiu/peon-ping/releases/download/vX.X.X/peon-ping-X.X.X.tar.gz -o peon-ping.tar.gz
+curl -fSL https://github.com/kenyiu/peon-ping/releases/download/vX.X.X/checksums.txt -o checksums.txt
 
 # Verify
 sha256sum -c checksums.txt --ignore-missing
@@ -126,7 +124,7 @@ Edit `~/.claude/hooks/peon-ping/config.json` (global) or `./.claude/hooks/peon-p
 
 | Pack | Character | Sounds | By |
 |---|---|---|---|
-| `peon` (default) | Orc Peon (Warcraft III) | "Ready to work?", "Work, work.", "Okie dokie." | [@tonyyont](https://github.com/tonyyont) |
+| `peon` (default) | Orc Peon (Warcraft III) | "Ready to work?", "Work, work.", "Okie dokie." | [@kenyiu](https://github.com/kenyiu) |
 | `peon_fr` | Orc Peon (Warcraft III, French) | "Prêt à travailler?", "Travail, travail.", "D'accord." | [@thomasKn](https://github.com/thomasKn) |
 | `peon_pl` | Orc Peon (Warcraft III, Polish) | Polish voice lines | [@askowronski](https://github.com/askowronski) |
 | `peasant` | Human Peasant (Warcraft III) | "Yes, milord?", "Job's done!", "Ready, sir." | [@thomasKn](https://github.com/thomasKn) |
