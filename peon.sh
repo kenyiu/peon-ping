@@ -459,10 +459,20 @@ print('SOUND_FILE=' + q(sound_file))
 # If Python signalled early exit (disabled, agent, unknown event), bail out
 [ "${PEON_EXIT:-true}" = "true" ] && exit 0
 
+# --- Config/state directory helpers (support CLAUDE_PEON_DIR override) ---
+resolve_peon_dir() {
+  if [[ -n "${CLAUDE_PEON_DIR:-}" ]]; then
+    echo "$CLAUDE_PEON_DIR"
+  else
+    echo "$SCRIPT_DIR"
+  fi
+}
+PEON_DIR=$(resolve_peon_dir)
+
 # --- Check for updates (SessionStart only, once per day, non-blocking) ---
 if [ "$EVENT" = "SessionStart" ]; then
   (
-    CHECK_FILE="$SCRIPT_DIR/.last_update_check"
+    CHECK_FILE="$PEON_DIR/.last_update_check"
     NOW=$(date +%s)
     LAST_CHECK=0
     [ -f "$CHECK_FILE" ] && LAST_CHECK=$(cat "$CHECK_FILE" 2>/dev/null || echo 0)
@@ -471,24 +481,24 @@ if [ "$EVENT" = "SessionStart" ]; then
     if [ "$ELAPSED" -gt 86400 ]; then
       echo "$NOW" > "$CHECK_FILE"
       LOCAL_VERSION=""
-      [ -f "$SCRIPT_DIR/VERSION" ] && LOCAL_VERSION=$(cat "$SCRIPT_DIR/VERSION" | tr -d '[:space:]')
+      [ -f "$PEON_DIR/VERSION" ] && LOCAL_VERSION=$(cat "$PEON_DIR/VERSION" | tr -d '[:space:]')
       REMOTE_VERSION=$(curl -fsSL --connect-timeout 3 --max-time 5 \
         "https://raw.githubusercontent.com/tonyyont/peon-ping/main/VERSION" 2>/dev/null | tr -d '[:space:]')
       if [ -n "$REMOTE_VERSION" ] && [ -n "$LOCAL_VERSION" ] && [ "$REMOTE_VERSION" != "$LOCAL_VERSION" ]; then
         # Write update notice to a file so we can display it
-        echo "$REMOTE_VERSION" > "$SCRIPT_DIR/.update_available"
+        echo "$REMOTE_VERSION" > "$PEON_DIR/.update_available"
       else
-        rm -f "$SCRIPT_DIR/.update_available"
+        rm -f "$PEON_DIR/.update_available"
       fi
     fi
   ) &>/dev/null &
 fi
 
 # --- Show update notice (if available, on SessionStart only) ---
-if [ "$EVENT" = "SessionStart" ] && [ -f "$SCRIPT_DIR/.update_available" ]; then
-  NEW_VER=$(cat "$SCRIPT_DIR/.update_available" 2>/dev/null | tr -d '[:space:]')
+if [ "$EVENT" = "SessionStart" ] && [ -f "$PEON_DIR/.update_available" ]; then
+  NEW_VER=$(cat "$PEON_DIR/.update_available" 2>/dev/null | tr -d '[:space:]')
   CUR_VER=""
-  [ -f "$SCRIPT_DIR/VERSION" ] && CUR_VER=$(cat "$SCRIPT_DIR/VERSION" | tr -d '[:space:]')
+  [ -f "$PEON_DIR/VERSION" ] && CUR_VER=$(cat "$PEON_DIR/VERSION" 2>/dev/null | tr -d '[:space:]')
   if [ -n "$NEW_VER" ]; then
     echo "peon-ping update available: ${CUR_VER:-?} → $NEW_VER — run: curl -fsSL https://raw.githubusercontent.com/tonyyont/peon-ping/main/install.sh | bash" >&2
   fi
