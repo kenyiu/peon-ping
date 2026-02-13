@@ -1406,7 +1406,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--wc3-card-border) var(--wc3-
 
   <div class="picker-command">
     <div class="install-block" onclick="copyInstall(this)" title="Click to copy" role="button" aria-label="Copy custom install command">
-      <code id="pickerCommandCode">curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash</code>
+              <code id="pickerCommandCode">curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash</code>
       <button class="copy-btn" aria-label="Copy to clipboard"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V2.5A1.5 1.5 0 014.5 1H10"/></svg></button>
     </div>
   </div>
@@ -1760,7 +1760,7 @@ function updatePickerCommand() {
   var code = document.getElementById('pickerCommandCode');
   var count = document.getElementById('pickerCount');
   count.textContent = selectedPacks.size + ' pack' + (selectedPacks.size !== 1 ? 's' : '') + ' selected';
-  var base = 'curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash';
+      var base = 'curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash';
   if (selectedPacks.size === 0 || setsEqual(selectedPacks, DEFAULT_PACKS)) {
     code.textContent = base;
   } else if (selectedPacks.size === registryPacks.length) {

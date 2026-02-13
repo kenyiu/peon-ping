@@ -23,7 +23,7 @@ Then run `peon-ping-setup` to register hooks and download sound packs. macOS and
 ### Option 2: Installer script (macOS, Linux, WSL2)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash
 ```
 
 Installs 10 curated English packs by default. Re-run to update while preserving config/state.
@@ -41,9 +41,9 @@ Useful installer flags:
 Examples:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash -s -- --all
-curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash -s -- --packs=peon,glados
-curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash -s -- --local
+curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash -s -- --all
+curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash -s -- --packs=peon,glados
+curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/install.sh | bash -s -- --local
 ```
 
 If a global install exists and you install local (or vice versa), the installer prompts you to remove the existing one to avoid conflicts.
@@ -51,7 +51,7 @@ If a global install exists and you install local (or vice versa), the installer 
 ### Option 3: Clone and inspect first
 
 ```bash
-git clone https://github.com/PeonPing/peon-ping.git
+git clone https://github.com/kenyiu/peon-ping.git
 cd peon-ping
 ./install.sh
 ```
@@ -136,7 +136,7 @@ peon-ping works with any agentic IDE that supports hooks. Adapters translate IDE
 | **Claude Code** | Built-in | `curl \| bash` install handles everything |
 | **OpenAI Codex** | Adapter | Add `command = "bash ~/.claude/hooks/peon-ping/adapters/codex.sh"` to `~/.codex/config.toml` under `[notify]` |
 | **Cursor** | Adapter | Add hook entries to `~/.cursor/hooks.json` pointing to `adapters/cursor.sh` |
-| **OpenCode** | Adapter | `curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/adapters/opencode.sh \| bash` |
+| **OpenCode** | Adapter | `curl -fsSL https://raw.githubusercontent.com/kenyiu/peon-ping/main/adapters/opencode.sh \| bash` |
 
 ## Sound packs
 
